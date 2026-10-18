@@ -1,0 +1,29 @@
+# Hoppscotch Community Edition 2026.9.0: official all-in-one (AIO) image, pinned by tag AND digest.
+# Reference config for the "Hoppscotch" service. Railway can't build from this repo
+# (image-only deploy); the marketplace template is generated from the live project.
+# The second service is stock Railway Postgres (see env.example for its variables).
+[build]
+image = "hoppscotch/hoppscotch:2026.9.0@sha256:3160f5b3acf49478552a66a0785ee6c75f64311066f149f7d946fbd540f8388d"
+
+[deploy]
+# The AIO image does not migrate the database by itself (upstream docs: run
+# `pnpm exec prisma migrate deploy` inside the container). This start command applies
+# pending Prisma migrations, then hands over to the image's normal entrypoint
+# (tini -> aio_run.mjs: Caddy on :80, backend on :8080, webapp-server on :3200).
+# A Railway start command replaces the image ENTRYPOINT, so tini is called explicitly.
+startCommand = "/bin/sh -c \"cd /dist/backend && pnpm exec prisma migrate deploy && exec tini -s -- node /usr/src/app/aio_run.mjs\""
+
+# PORT=8080 is the backend's own port (Caddy proxies /backend -> localhost:8080), so the
+# Railway healthcheck hits the backend's /ping directly. The public domain targets port 80
+# (Caddy, ENABLE_SUBPATH_BASED_ACCESS=true): / = app, /admin = admin dashboard, /backend = API.
+healthcheckPath = "/ping"
+healthcheckTimeout = 300
+
+# ALWAYS, not ON_FAILURE: on first boot (and after every config change saved in the admin
+# dashboard) the backend seeds/reloads its infra config and exits with code 0 on purpose,
+# expecting the orchestrator to start it again (upstream runs it with restart: unless-stopped).
+restartPolicyType = "ALWAYS"
+
+# No volume: all state (users, collections, teams, auth/SMTP settings, JWT/session secrets)
+# lives in Postgres. The desktop-app bundle signing key is derived from
+# WEBAPP_SERVER_SIGNING_SECRET instead of a file under /data/webapp-server.

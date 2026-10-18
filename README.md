@@ -1,6 +1,6 @@
 # Hoppscotch — open-source API development platform (Postman alternative), Community Edition 2026.9.0. Deploy on Railway with one click.
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/TEMPLATE_CODE)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/6Un818)
 
 [Hoppscotch](https://github.com/hoppscotch/hoppscotch) (MIT) is an open-source API client that runs in the browser: REST, GraphQL, WebSocket, SSE, Socket.IO, MQTT and gRPC-web requests, collections, environments, pre-request and test scripts, team workspaces with roles, shared requests, history, mock servers and published API docs. The self-hosted **Community Edition** adds accounts, sync and teams on your own Postgres, plus an **admin dashboard** for users, teams, auth providers and SMTP. This template runs the **official all-in-one image** `hoppscotch/hoppscotch:2026.9.0` (app + admin + backend in one container), pinned by digest, on **one domain** with Railway Postgres. It needs **no deploy-time input**.
 
